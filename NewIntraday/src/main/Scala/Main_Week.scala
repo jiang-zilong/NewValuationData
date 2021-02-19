@@ -4,6 +4,13 @@ import java.text.SimpleDateFormat
 import Bean.WeekAll
 import org.apache.spark.sql.SparkSession
 
+
+/**
+ * 按照类型分组对数据进行计算
+ *
+ *
+ *
+ */
 object Main_Week {
   def main(args: Array[String]): Unit = {
 
