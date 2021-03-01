@@ -23,7 +23,7 @@ object Main_Week {
 
 
     //一周的汇总之后的数据路径
-    val week_date = "D:\\DATA\\1.29-2.4\\Result_Day_1.29-2.4.txt"
+    val week_date = "D:\\DATA\\2.22-2.26\\summary.txt"
 
 
 
@@ -32,11 +32,22 @@ object Main_Week {
 
     val emp = lines.map(x => WeekAll(x(0), x(1),
       new Date(new SimpleDateFormat("yyyy/MM/dd").parse(x(2)).getTime),
-      x(3).toFloat, x(4).toFloat, x(5).toFloat, x(6).toFloat, x(7).toFloat, x(8).toFloat, x(9).toFloat,
-      x(10).toFloat, x(11).toFloat,x(12).toFloat))
+      x(3).toFloat,
+      x(4).toFloat,
+      x(5).toFloat,
+      x(6).toFloat,
+      x(7).toFloat,
+      x(8).toFloat,
+      x(9).toFloat,
+      x(10).toFloat,
+      x(11).toFloat,
+      x(12).toFloat,
+      x(13).toFloat))
+
     val frame = emp.toDF()
     frame.show(1000)
     frame.createTempView("summary")
+
 
 
 
@@ -78,12 +89,11 @@ object Main_Week {
         |
         |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need1_opposite")*/
-      .show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need1_opposite")//.show()
 
     /**
      * 自定义 绝对值的函数 abs 并且进行注册为abs
@@ -127,23 +137,24 @@ object Main_Week {
         |
         |summary.type as `基金类型`,
         |count(fund_code) as `基金数量`,
-        |cast(sum(abs(summary.estimate_return -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `蚂蚁估值绝对偏差均值`,
-        |cast(sum(abs(summary.tiantian_nav    -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `天天估值绝对偏差均值`,
-        |cast(sum(abs(summary.jy_nav          -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `聚源估值绝对偏差均值`,
-        |cast(sum(abs(summary.Fgz             -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `好买估值绝对偏差均值`
+        |cast(sum(abs(summary.estimate_return   -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `蚂蚁估值绝对偏差均值`,
+        |cast(sum(abs(summary.tiantian_nav      -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `天天估值绝对偏差均值`,
+        |cast(sum(abs(summary.jy_nav            -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `聚源估值绝对偏差均值`,
+        |cast(sum(abs(summary.Fgz               -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `好买估值绝对偏差均值`,
+        |cast(sum(abs(summary.WDestimate_return -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `万德估值绝对偏差均值`
         |from summary
         |group by summary.type
         |order by count(fund_code)
         |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need2_absolute_mean")*/.show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need2_absolute_mean")//.show()
 
     /**
-     * 2.2 估值绝对偏差的中位数（x1000）： t30-t33
+     * 2.2 估值绝对偏差的中位数（x1000）： t30-t33  wind t140
      *    估值绝对偏差中值：估值偏差按升序或者降序排列，假如有n个数据，
      *  当n为偶数时，中位数为第n/2位数和第(n+2)/2位数的平均数；如果n为奇数，那么中位数为第（n+1）/2位数的值，后放大x1000
      */
@@ -159,7 +170,8 @@ object Main_Week {
         |my.Myvaluation as `蚂蚁估值绝对偏差中值`,
         |tt.Ttvaluation as `天天估值绝对偏差中值`,
         |jy.Jyvaluation as `聚源估值绝对偏差中值`,
-        |hm.Hmvaluation as `好买估值绝对偏差中值`
+        |hm.Hmvaluation as `好买估值绝对偏差中值`,
+        |wd.Wdvaluation as `万德估值绝对偏差中值`
         |
         |from(
         |select
@@ -214,6 +226,23 @@ object Main_Week {
         |
         |join
         |(select
+        |t140.type,
+        |count(t140.fund_code) c6 ,
+        |cast(median(WdMedian) as decimal(16,3)) as Wdvaluation
+        |from (
+        |select
+        |summary.fund_code,
+        |summary.type,
+        |cast (abs(summary.WDestimate_return - summary.report_nav) *1000 as decimal(16,3)) WdMedian
+        |from summary
+        |order by WdMedian ) t140
+        |group by t140.type ) wd
+        |on my.c = wd.c6
+        |
+        |
+        |
+        |join
+        |(select
         |
         |t33.type,
         |count(t33.fund_code) c3 ,
@@ -232,14 +261,15 @@ object Main_Week {
         |
         |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need2_absolute_median")*/.show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need2_absolute_median")//.show()
+
 
     /**
-     * 2.3  估值绝对偏差的标准差（x1000） t40 - t43
+     * 2.3  估值绝对偏差的标准差（x1000） t40 - t43  wind t141
      *
      */
     spark.sql(
@@ -252,7 +282,8 @@ object Main_Week {
         |mayi.MyStd       as `蚂蚁估值绝对偏差标准差`,
         |tiantian.TtStd   as `天天估值绝对偏差标准差`,
         |juyuan.JyStd     as `聚源估值绝对偏差标准差`,
-        |haomai.HmStd     as `好买估值绝对偏差标准差`
+        |haomai.HmStd     as `好买估值绝对偏差标准差`,
+        |wind.WdStd       as `万德估值绝对偏差标准差`
         |
         |from
         |(select
@@ -283,6 +314,21 @@ object Main_Week {
         |from  summary) t41
         |group by t41.type) juyuan
         |on mayi.count = juyuan.count1
+        |
+        |
+        |join
+        |(select
+        |count(*) count6,
+        |t141.type,
+        |cast (stddev_pop(Wdadv)  as decimal(16,3)) as WdStd
+        |from(
+        |select
+        |summary.type,
+        |cast (abs(summary.WDestimate_return - summary.report_nav) *1000 as decimal(16,3)) Wdadv
+        |from  summary) t141
+        |group by t141.type) wind
+        |on mayi.count = wind.count6
+        |
         |
         |join
         |(select
@@ -316,12 +362,13 @@ object Main_Week {
         |
         |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need2_absolute_std")*/
-      .show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need2_absolute_std")//.show()
+
+
     /**
      * 3.估值相对偏差的均值（x1000）、中位数（x1000）、标准差（x1000）
      *  估值相对偏差=abs（各平台估算净值-实际净值）/实际净值
@@ -338,22 +385,23 @@ object Main_Week {
         |
         |type as  `基金类型`,
         |count(fund_code) as `基金数量`,
-        |concat(cast( sum(  abs((summary.estimate_return -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `蚂蚁估值相对偏差均值`,
-        |concat(cast( sum(  abs((summary.tiantian_nav    -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `天天估值相对偏差均值`,
-        |concat(cast( sum(  abs((summary.jy_nav          -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `聚源估值相对偏差均值`,
-        |concat(cast( sum(  abs((summary.Fgz             -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `好买估值相对偏差均值`
+        |concat(cast( sum(  abs((summary.estimate_return   -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `蚂蚁估值相对偏差均值`,
+        |concat(cast( sum(  abs((summary.tiantian_nav      -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `天天估值相对偏差均值`,
+        |concat(cast( sum(  abs((summary.jy_nav            -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `聚源估值相对偏差均值`,
+        |concat(cast( sum(  abs((summary.Fgz               -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `好买估值相对偏差均值`,
+        |concat(cast( sum(  abs((summary.WDestimate_return -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `万德估值相对偏差均值`
         |from summary
         |group by type
         |order by count(fund_code)
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need3_relative_mean")*/.show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need3_relative_mean")//.show()
 
     /**
-     * 3.2  估值相对偏差的中位数（x1000）中位数 34-37  完成
+     * 3.2  估值相对偏差的中位数（x1000）中位数 34-37  完成  wind t142
      */
 
 
@@ -368,7 +416,8 @@ object Main_Week {
         |concat(my1.Myvaluation1,'%')   as  `蚂蚁估值相对偏差中值`,
         |concat(tt1.Ttvaluation1,'%')   as  `天天估值相对偏差中值`,
         |concat(jy1.Jyvaluation1,'%')   as  `聚源估值相对偏差中值`,
-        |concat(hm1.Hmvaluation1,'%')   as  `好买估值相对偏差中值`
+        |concat(hm1.Hmvaluation1,'%')   as  `好买估值相对偏差中值`,
+        |concat(wd1.Wdvaluation1,'%')   as  `万德估值相对偏差中值`
         |
         |from
         |(select
@@ -403,6 +452,23 @@ object Main_Week {
         |group by t35.type
         |order by count(t35.fund_code))jy1
         |on my1.type = jy1.type
+        |
+        |
+        |join
+        |(select
+        |t142.type ,
+        |cast(median(WdtMedian1) as decimal(16,3) ) Wdvaluation1
+        |from(
+        |select
+        |summary.fund_code,
+        |summary.type     ,
+        |cast (abs((summary.WDestimate_return -summary.report_nav)/(summary.report_nav)) *100 as decimal(16,3)) WdtMedian1
+        |from summary
+        |order by WdtMedian1 ) t142
+        |group by t142.type
+        |order by count(t142.fund_code))wd1
+        |on my1.type = wd1.type
+        |
         |
         |join
         |(select
@@ -440,16 +506,15 @@ object Main_Week {
         |
         |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need3_relative_median")*/
-      .show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need3_relative_median")//.show()
 
 
     /**
-     * 3.3  估值相对偏差的标准差   t45-t48
+     * 3.3  估值相对偏差的标准差   t45-t48  wind t143
      *
      */
     spark.sql(
@@ -463,7 +528,8 @@ object Main_Week {
         |concat(mayi1.MyStd1     , '%') as `蚂蚁估值相对偏差标准差` ,
         |concat(tiantian1.TtStd1 , '%') as `天天估值相对偏差标准差`,
         |concat(juyuan1.JyStd1   , '%') as `聚源估值相对偏差标准差`,
-        |concat(haomai1.HmStd1   , '%') as `好买估值相对偏差标准差`
+        |concat(haomai1.HmStd1   , '%') as `好买估值相对偏差标准差`,
+        |concat(wind1.WdStd1     , '%') as `万德估值相对偏差标准差`
         |
         |from
         |(select
@@ -508,6 +574,20 @@ object Main_Week {
         |group  by t47.type) haomai1
         |on mayi1.type = haomai1.type
         |
+        |
+        |join
+        |(select
+        |t143.type    ,
+        |cast (stddev_pop(Wdadv1)  as decimal(16,3)) WdStd1
+        |from(
+        |select
+        |summary.type    ,
+        |cast (abs((summary.WDestimate_return -summary.report_nav)/(summary.report_nav)) *100 as decimal(16,3)) Wdadv1
+        |from  summary) t143
+        |group  by t143.type) wind1
+        |on mayi1.type = wind1.type
+        |
+        |
         |join
         |(select
         |
@@ -525,15 +605,16 @@ object Main_Week {
         |
         |
         |""".stripMargin)
-     /* .coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need3_relative_std")*/.show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need3_relative_std")//.show()
+
 
     /**
      *
-     * 4.a. 统计估值绝对偏差落在以下区间内的个数及占比（该区间的个数/该日总基金的个数） t10-t13
+     * 4.a. 统计估值绝对偏差落在以下区间内的个数及占比（该区间的个数/该日总基金的个数） t10-t13   wind t144 z
      *       <=0.001	（0.001,0.003]	(0.003,0.005]	(0.005,0.01]	(0.01,0.02]	 >0.02
      */
 
@@ -640,22 +721,43 @@ object Main_Week {
         |from summary) t12
         |group by t12.type
         |
-
         |
+        |union all
+        |select
+        |'万德'         as `基金名称`,
+        |t144.type      as `基金类型`,
+        |concat(cast(sum(z1) / count(*) *100 as decimal(16,3)),'%') as `<=0.001`,
+        |concat(cast(sum(z2) / count(*) *100 as decimal(16,3)),'%') as `（0.001,0.003]`,
+        |concat(cast(sum(z3) / count(*) *100 as decimal(16,3)),'%') as `(0.003,0.005]`,
+        |concat(cast(sum(z4) / count(*) *100 as decimal(16,3)),'%') as `(0.005,0.01]`,
+        |concat(cast(sum(z5) / count(*) *100 as decimal(16,3)),'%') as `(0.01,0.02]`,
+        |concat(cast(sum(z6) / count(*) *100 as decimal(16,3)),'%') as `>0.02`
+        |from(
+        |select
+        |summary.fund_code,
+        |summary.type     ,
+        |if( abs(summary.WDestimate_return - summary.report_nav)<=0.001,1,0) z1,
+        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.001 and  0.003), 1,0) z2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.003 and  0.005), 1,0) z3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.005 and  0.01 ), 1,0) z4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.01  and  0.02 ), 1,0) z5,
+        |if( abs(summary.WDestimate_return - summary.report_nav)>0.02,1,0) z6
+        |from summary) t144
+        |group by t144.type
         |
         |
         |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need4_Absolute_Deviation1")*/.show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need4_Absolute_Deviation1")//.show()
 
 
     /**
      *
-     * 4.b 统计估值绝对偏差落在以下区间内的个数及占比（该区间的个数/该日总基金的个数）    t14-17
+     * 4.b 统计估值绝对偏差落在以下区间内的个数及占比（该区间的个数/该日总基金的个数）    t14-17  wind t145
      *
      * <=0.001	<=0.003	<=0.005	<=0.01	 <=0.02  	>0.02
      *
@@ -766,21 +868,43 @@ object Main_Week {
         |from summary) t16
         |group by t16.type
         |
+        |union all
+        |select
+        |'万德'         as `基金名称`,
+        |t145.type      as `基金类型` ,
+        |concat(cast(sum(zz1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
+        |concat(cast(sum(zz2) / count(*) * 100 as decimal(16,3)),'%') as `<=0.003`,
+        |concat(cast(sum(zz3) / count(*) * 100 as decimal(16,3)),'%') as `<=0.005`,
+        |concat(cast(sum(zz4) / count(*) * 100 as decimal(16,3)),'%') as `<=0.01 `,
+        |concat(cast(sum(zz5) / count(*) * 100 as decimal(16,3)),'%') as `<=0.02 `,
+        |concat(cast(sum(zz6) / count(*) * 100 as decimal(16,3)),'%') as `>0.02 `
+        |from(
+        |select
+        |summary.fund_code ,
+        |summary.type      ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.001 ), 1,0) zz1,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.003 ), 1,0) zz2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.005 ), 1,0) zz3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.01  ), 1,0) zz4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.02  ), 1,0) zz5,
+        |if((abs(summary.WDestimate_return - summary.report_nav) >  0.02  ), 1,0) zz6
+        |from summary) t145
+        |group by t145.type
         |
         |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need4_Absolute_Deviation2")*/.show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need4_Absolute_Deviation2")//.show()
 
     /**
      *
      * 5. 估值相对偏差的分布
      *   a. 统计估值相对偏差落在以下区间内的个数及占比（该区间的个数/该日总基金的个数）
      *      t18-t21
-     *
+     *     wind t146  y
      *      <=0.001	（0.001,0.003]	(0.003,0.005]	(0.005,0.01]	(0.01,0.02]	>0.02
      */
 
@@ -886,17 +1010,41 @@ object Main_Week {
         |from summary) t20
         |group by t20.type
         |
+        |
+        |union all
+        |select
+        |'好买'            as `基金名称`,
+        |t146.type         as `基金类型`,
+        |concat(cast(sum(y1) / count(fund_code) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(y2) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.05%,0.1%]`,
+        |concat(cast(sum(y3) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.1%,0.3]`,
+        |concat(cast(sum(y4) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.3%,0.5%]`,
+        |concat(cast(sum(y5) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.5%,1%]`,
+        |concat(cast(sum(y6) / count(fund_code) *100 as decimal(16,3)),'%') as `>1%`
+        |from(
+        |select
+        |summary.fund_code,
+        |summary.type     ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    <=0.0005),1,0) y1 ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.0005 and 0.001 ),1,0) y2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.001  and 0.003 ),1,0) y3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.003  and 0.005 ),1,0) y4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.005  and 0.01  ),1,0) y5,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    >0.01),1,0) y6
+        |from summary) t146
+        |group by t146.type
+        |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need5_Relative_Deviation1")*/.show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need5_Relative_Deviation1")//.show()
 
 
     /**
      *
-     * b. 统计估值绝对偏差落在以下区间内的个数及占比（该区间的个数/该日总基金的个数） t22-t25
+     * b. 统计估值绝对偏差落在以下区间内的个数及占比（该区间的个数/该日总基金的个数） t22-t25  wind t147 yy
      *
      *    <=0.05%	<=0.1%	<=0.3%	<=0.5%	<=1%	>1%
      */
@@ -1003,15 +1151,39 @@ object Main_Week {
         |from summary) t24
         |group by t24.type
         |
-
+        |
+        |
+        |union all
+        |select
+        |'万德'           as `基金名称`,
+        |t147.type        as `基金类型`,
+        |concat(cast(sum(yy1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
+        |concat(cast(sum(yy2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
+        |concat(cast(sum(yy3) / count(*) *100 as decimal(16,3)),'%') as `<=0.03% `,
+        |concat(cast(sum(yy4) / count(*) *100 as decimal(16,3)),'%') as `<=0.05% `,
+        |concat(cast(sum(yy5) / count(*) *100 as decimal(16,3)),'%') as `<=0.1%  `,
+        |concat(cast(sum(yy6) / count(*) *100 as decimal(16,3)),'%') as ` >0.1%   `
+        |from(
+        |select
+        |summary.fund_code  ,
+        |summary.type    ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.0005),1,0) yy1 ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.001 ),1,0) yy2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.003 ),1,0) yy3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.005 ),1,0) yy4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.01  ),1,0) yy5,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   >  0.01  ),1,0) yy6
+        |from summary) t147
+        |group by t147.type
         |
         |
         |""".stripMargin)
-      /*.coalesce(1)
+      .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\1.29-2.4\\Week\\need5_Relative_Deviation2")*/.show()
+      .save("D:\\Result\\2.22-2.26\\Week\\need5_Relative_Deviation2")//.show()
+
 
 
     spark.stop()
