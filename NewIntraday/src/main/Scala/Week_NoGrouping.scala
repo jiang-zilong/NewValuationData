@@ -22,7 +22,7 @@ import org.apache.spark.sql.SparkSession
  *
  */
 
-object My {
+object Week_NoGrouping {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder()
       .master("local")
@@ -41,8 +41,17 @@ object My {
 
     val emp = lines.map(x => WeekAll(x(0), x(1),
       new Date(new SimpleDateFormat("yyyy/MM/dd").parse(x(2)).getTime),
-      x(3).toFloat, x(4).toFloat, x(5).toFloat, x(6).toFloat, x(7).toFloat, x(8).toFloat, x(9).toFloat,
-      x(10).toFloat, x(11).toFloat, x(12).toFloat,x(13).toFloat))
+      x(3).toFloat,
+      x(4).toFloat,
+      x(5).toFloat,
+      x(6).toFloat,
+      x(7).toFloat,
+      x(8).toFloat,
+      x(9).toFloat,
+      x(10).toFloat,
+      x(11).toFloat,
+      x(12).toFloat,
+      x(13).toFloat))
     val frame = emp.toDF()
     frame.show()
     frame.createTempView("summary")
@@ -80,11 +89,11 @@ object My {
         |
         |""".stripMargin)
 
-    .coalesce(1)
+    /*.coalesce(1)
     .write.mode("Append")
     .option("header", "true")
     .format("CSV")
-    .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need1_opposite")//.show()
+    .save("D:\\Result\\Main\\Week_NoGrouping\\need1_opposite")*/.show()
 
 
     /**
@@ -133,11 +142,11 @@ object My {
         |from summary
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\\\need2_absolute_mean")//.show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\\\need2_absolute_mean")*/.show()
 
 
     /**
@@ -227,11 +236,11 @@ object My {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need2_absolute_median")// .show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need2_absolute_median")*/ .show()
 
 
     /**
@@ -308,11 +317,11 @@ object My {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need2_absolute_std")// .show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need2_absolute_std")*/ .show()
 
 
     /**
@@ -340,11 +349,11 @@ object My {
         |from summary
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need3_relative_mean")// .show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need3_relative_mean")*/ .show()
 
 
 
@@ -435,11 +444,11 @@ object My {
         |on my.c1=wind.c6
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need3_relative_median")//.show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need3_relative_median")*/.show()
 
 
     /**
@@ -511,11 +520,11 @@ object My {
         |on mayi1.co = wind1.co6
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need3_relative_std")//.show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need3_relative_std")*/.show()
 
 
     /**
@@ -634,11 +643,11 @@ object My {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need4_Absolute_Deviation1")//.show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need4_Absolute_Deviation1")*/.show()
 
 
     /**
@@ -759,11 +768,11 @@ object My {
         |from summary) t155
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need4_Absolute_Deviation2")//.show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need4_Absolute_Deviation2")*/.show()
 
 
     /**
@@ -882,11 +891,11 @@ object My {
         |from summary) t156
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need5_Relative_Deviation1")//.show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need5_Relative_Deviation1")*/.show()
 
 
 
@@ -997,11 +1006,11 @@ object My {
         |from summary) t157
         |
         |""".stripMargin)
-      .coalesce(1)
+     /* .coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Week_NoGrouping\\need5_Absolute_Deviation2")//.show()
+      .save("D:\\Result\\Main\\Week_NoGrouping\\need5_Absolute_Deviation2")*/.show()
 
 
     spark.stop()

@@ -15,10 +15,10 @@ object Main {
       .getOrCreate()
     import spark.sqlContext.implicits._
 
-    val jy_tt_Path = "D:\\DATA\\2.22-2.26\\all_fund_2021-02-25-15.txt"
-    val hm_Path = "D:\\DATA\\2.22-2.26\\gz_22_26.txt"
-    val my_Path = "D:\\DATA\\2.22-2.26\\mayi.txt"
-    val wd_Path = "D:\\DATA\\2.22-2.26\\wind.txt"
+    val jy_tt_Path = "D:\\DATA\\2.26-3.4\\all_fund_2021-02-26-15.txt"
+    val hm_Path =    "D:\\DATA\\2.26-3.4\\gz_26_04.txt"
+    val my_Path =    "D:\\DATA\\2.26-3.4\\mayi.txt"
+    val wd_Path =    "D:\\DATA\\2.26-3.4\\wind.txt"
 
     val CodeTable_Path = "D:\\DATA\\1.22-1.28\\fund_info.txt"
     val Found_Type_Path = "D:\\DATA\\1.22-1.28\\gz_marking.txt"
@@ -32,7 +32,7 @@ object Main {
       .filter(_ (5) != (""))
       .filter(_ (6) != (""))
       .filter(_ (9) != (""))
-      .filter(_ (10) != (""))
+      .filter(_ (10)!= (""))
       .map(x => JyANDTt(x(0).substring(0, 6), x(1), new java.sql.Date(new SimpleDateFormat("yyyyMMdd").parse(x(2).substring(0, 8)).getTime),
         x(3).toFloat, x(4).toFloat, x(5).toFloat, x(6).toFloat, x(7), x(8), x(9).toFloat, x(10).toFloat, x(11), x(12)))
     val empDF = allEmp.toDF()
@@ -51,7 +51,7 @@ object Main {
     val allEmp1 = lines1.filter(_.length == 5).map(x => Hm(x(0).substring(0, 6),
       new java.sql.Date(new SimpleDateFormat("yyyyMMdd").parse(x(1).substring(0, 8)).getTime), x(2), x(3).toFloat, x(4).toFloat))
     val empDF1 = allEmp1.toDF()
-    empDF1.show()
+    empDF1.show(100)
 
     //蚂蚁金服的数据
     val value = spark.read /*.format("text").option("encoding", "gbk")*/
@@ -64,6 +64,7 @@ object Main {
     val empDF2: DataFrame = allEmp2.toDF()
     empDF2.show()
 
+    /*
     //CodeTable 基金分类
     val lines3: RDD[Array[String]] = spark.sparkContext.textFile(CodeTable_Path).map(_.split("\\|"))
     val allEmp3 = lines3.filter(_.length == 3).map(x => CodeTable(x(1).substring(1, 7), x(2).substring(1, 4).split(" ")(0)))
@@ -78,7 +79,7 @@ object Main {
     empDF4.show()
 
 
-    //万德的数据     5  8 19号的数据
+    //万德的数据
     val lines5 = spark.sparkContext.textFile(wd_Path).map(_.split("\t"))
     val allEmp5 = lines5.filter(_.length == 3)
       .filter(_ (1) != ("-"))
@@ -107,7 +108,7 @@ object Main {
       """
         |
         |select
-        | t5.fund_code  ,
+        | t5.fund_code ,
         | t8.Type,
         | t5.time_int   ,
         | t5.report_nav ,
@@ -127,22 +128,22 @@ object Main {
         |from
         |(select *
         |from t0
-        |where t0.time_int='2021-02-25')t5
+        |where t0.time_int='2021-02-26')t5
         | join
         |(select *
         |from t1
-        |where t1.Fgzrq = '2021-02-25')t6
+        |where t1.Fgzrq = '2021-02-26')t6
         |on t5.fund_code = t6.Fjjdm
         |
         |join
         |(select *
         | from t100
-        | where t100.date = '2021-02-25') wd
+        | where t100.date = '2021-02-26') wd
         | on t5.fund_code = wd.code
         | join
         |(select *
         |from t2
-        |where t2.download_date='2021-02-25')t7
+        |where t2.download_date='2021-02-26')t7
         |on t5.fund_code = t7.fproduct_code
         |join
         |(select
@@ -159,13 +160,14 @@ object Main {
 
     val summary = spark.sql(sql)
     summary
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\summary")// .show(1000)
+      .save("D:\\Result\\Main\\Day\\s1")*/ .show(1000)
 
     summary.createTempView("summary")
+
 
 
     /**
@@ -208,11 +210,11 @@ object Main {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need1_opposite")// .show(11)
+      .save("D:\\Result\\Main\\Day\\need1_opposite")*/ .show(11)
 
     /**
      * 自定义 绝对值的函数 abs 并且进行注册为abs
@@ -263,11 +265,11 @@ object Main {
         |order by count(fund_code)
         |
         |""".stripMargin)
-       .coalesce(1)
+       /*.coalesce(1)
        .write.mode("Append")
        .option("header", "true")
        .format("CSV")
-       .save("D:\\Result\\2.22-2.26\\Day\\need2_absolute_mean")// .show()
+       .save("D:\\Result\\Main\\Day\\need2_absolute_mean")*/ .show()
 
 
     /**
@@ -380,11 +382,11 @@ object Main {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need2_absolute_median") //.show()
+      .save("D:\\Result\\Main\\Day\\need2_absolute_median")*/.show()
 
 
     /**
@@ -481,11 +483,11 @@ object Main {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need2_absolute_std") //.show()
+      .save("D:\\Result\\Main\\Day\\need2_absolute_std")*/.show()
 
 
     /**
@@ -513,11 +515,11 @@ object Main {
         |group by time_int,type
         |order by count(fund_code)
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need3_relative_mean") //.show()
+      .save("D:\\Result\\Main\\Day\\need3_relative_mean") */.show()
 
 
     /**
@@ -624,11 +626,11 @@ object Main {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need3_relative_median") //.show()
+      .save("D:\\Result\\Main\\Day\\need3_relative_median") */.show()
 
 
     /**
@@ -724,11 +726,11 @@ object Main {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need3_relative_std")// .show()
+      .save("D:\\Result\\Main\\Day\\need3_relative_std")*/ .show()
 
 
     /**
@@ -868,11 +870,11 @@ object Main {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need4_Absolute_Deviation1")// .show()
+      .save("D:\\Result\\Main\\Day\\need4_Absolute_Deviation1")*/ .show()
 
 
     /**
@@ -1017,11 +1019,11 @@ object Main {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need4_Absolute_Deviation2")// .show()
+      .save("D:\\Result\\Main\\Day\\need4_Absolute_Deviation2")*/ .show()
 
 
     /**
@@ -1165,11 +1167,11 @@ object Main {
         |
         |
         |""".stripMargin)
-      .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
-      .save("D:\\Result\\2.22-2.26\\Day\\need5_Relative_Deviation1")// .show()
+      .save("D:\\Result\\Main\\Day\\need5_Relative_Deviation1")*/ .show()
 
 
     /**
@@ -1307,13 +1309,13 @@ object Main {
         |group by t138.time_int,t138.type
         |
         |""".stripMargin)
-       .coalesce(1)
+       /*.coalesce(1)
        .write.mode("Append")
        .option("header", "true")
        .format("CSV")
-       .save("D:\\Result\\2.22-2.26\\Day\\need5_Relative_Deviation2")// .show()
+       .save("D:\\Result\\Main\\Day\\need5_Relative_Deviation2")*/ .show()
 
-
+*/
     spark.stop()
 
   }
