@@ -6,7 +6,7 @@ import java.sql.Date
  * @author v_ziljiang
  * @date 2021/3/4 16:27
  */
-case class Fund_top(
+case class Fund_Top(
                      date: String,              //日期
                      FA: String,                //资产分类
                      code: String,              //基金商户号

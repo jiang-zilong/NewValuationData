@@ -23,7 +23,7 @@ object Main_Week {
 
 
     //一周的汇总之后的数据路径
-    val week_date = "D:\\DATA\\2.22-2.26\\summary.txt"
+    val week_date = "D:\\DATA\\3.5-3.11\\NO5号TopDay.txt"
 
 
 
@@ -31,7 +31,7 @@ object Main_Week {
       textFile(week_date).map(_.split("\t"))
 
     val emp = lines.map(x => WeekAll(x(0), x(1),
-      new Date(new SimpleDateFormat("yyyy/MM/dd").parse(x(2)).getTime),
+      new Date(new SimpleDateFormat("yyyy-MM-dd").parse(x(2)).getTime),
       x(3).toFloat,
       x(4).toFloat,
       x(5).toFloat,
@@ -141,7 +141,7 @@ object Main_Week {
         |cast(sum(abs(summary.tiantian_nav      -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `天天估值绝对偏差均值`,
         |cast(sum(abs(summary.jy_nav            -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `聚源估值绝对偏差均值`,
         |cast(sum(abs(summary.Fgz               -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `好买估值绝对偏差均值`,
-        |cast(sum(abs(summary.WDestimate_return -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `万德估值绝对偏差均值`
+        |cast(sum(abs(summary.WDestimate_return -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `万得估值绝对偏差均值`
         |from summary
         |group by summary.type
         |order by count(fund_code)
@@ -171,7 +171,7 @@ object Main_Week {
         |tt.Ttvaluation as `天天估值绝对偏差中值`,
         |jy.Jyvaluation as `聚源估值绝对偏差中值`,
         |hm.Hmvaluation as `好买估值绝对偏差中值`,
-        |wd.Wdvaluation as `万德估值绝对偏差中值`
+        |wd.Wdvaluation as `万得估值绝对偏差中值`
         |
         |from(
         |select
@@ -283,7 +283,7 @@ object Main_Week {
         |tiantian.TtStd   as `天天估值绝对偏差标准差`,
         |juyuan.JyStd     as `聚源估值绝对偏差标准差`,
         |haomai.HmStd     as `好买估值绝对偏差标准差`,
-        |wind.WdStd       as `万德估值绝对偏差标准差`
+        |wind.WdStd       as `万得估值绝对偏差标准差`
         |
         |from
         |(select
@@ -389,7 +389,7 @@ object Main_Week {
         |concat(cast( sum(  abs((summary.tiantian_nav      -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `天天估值相对偏差均值`,
         |concat(cast( sum(  abs((summary.jy_nav            -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `聚源估值相对偏差均值`,
         |concat(cast( sum(  abs((summary.Fgz               -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `好买估值相对偏差均值`,
-        |concat(cast( sum(  abs((summary.WDestimate_return -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `万德估值相对偏差均值`
+        |concat(cast( sum(  abs((summary.WDestimate_return -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `万得估值相对偏差均值`
         |from summary
         |group by type
         |order by count(fund_code)
@@ -417,7 +417,7 @@ object Main_Week {
         |concat(tt1.Ttvaluation1,'%')   as  `天天估值相对偏差中值`,
         |concat(jy1.Jyvaluation1,'%')   as  `聚源估值相对偏差中值`,
         |concat(hm1.Hmvaluation1,'%')   as  `好买估值相对偏差中值`,
-        |concat(wd1.Wdvaluation1,'%')   as  `万德估值相对偏差中值`
+        |concat(wd1.Wdvaluation1,'%')   as  `万得估值相对偏差中值`
         |
         |from
         |(select
@@ -529,7 +529,7 @@ object Main_Week {
         |concat(tiantian1.TtStd1 , '%') as `天天估值相对偏差标准差`,
         |concat(juyuan1.JyStd1   , '%') as `聚源估值相对偏差标准差`,
         |concat(haomai1.HmStd1   , '%') as `好买估值相对偏差标准差`,
-        |concat(wind1.WdStd1     , '%') as `万德估值相对偏差标准差`
+        |concat(wind1.WdStd1     , '%') as `万得估值相对偏差标准差`
         |
         |from
         |(select
@@ -624,7 +624,7 @@ object Main_Week {
         |
         |select
         |
-        |'蚂蚁金服'      as `基金名称`,
+        |'蚂蚁'          as `基金名称`,
         |t10.type       as `基金类型`,
         |concat(cast(sum(a1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
         |concat(cast(sum(a2) / count(*) * 100 as decimal(16,3)),'%') as `(0.001,0.003]`,
@@ -724,7 +724,7 @@ object Main_Week {
         |
         |union all
         |select
-        |'万德'         as `基金名称`,
+        |'万得'         as `基金名称`,
         |t144.type      as `基金类型`,
         |concat(cast(sum(z1) / count(*) *100 as decimal(16,3)),'%') as `<=0.001`,
         |concat(cast(sum(z2) / count(*) *100 as decimal(16,3)),'%') as `（0.001,0.003]`,
@@ -870,7 +870,7 @@ object Main_Week {
         |
         |union all
         |select
-        |'万德'         as `基金名称`,
+        |'万得'         as `基金名称`,
         |t145.type      as `基金类型` ,
         |concat(cast(sum(zz1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
         |concat(cast(sum(zz2) / count(*) * 100 as decimal(16,3)),'%') as `<=0.003`,
@@ -1013,7 +1013,7 @@ object Main_Week {
         |
         |union all
         |select
-        |'好买'            as `基金名称`,
+        |'万得 '            as `基金名称`,
         |t146.type         as `基金类型`,
         |concat(cast(sum(y1) / count(fund_code) *100 as decimal(16,3)),'%') as `<=0.05%`,
         |concat(cast(sum(y2) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.05%,0.1%]`,
@@ -1155,7 +1155,7 @@ object Main_Week {
         |
         |union all
         |select
-        |'万德'           as `基金名称`,
+        |'万得'           as `基金名称`,
         |t147.type        as `基金类型`,
         |concat(cast(sum(yy1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
         |concat(cast(sum(yy2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
