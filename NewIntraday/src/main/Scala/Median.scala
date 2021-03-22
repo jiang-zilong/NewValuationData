@@ -55,7 +55,5 @@ class Median extends UserDefinedAggregateFunction {
     } else {
       sortedWindow((windowSize + 1) / 2 - 1)
     }
-
-
   }
 }

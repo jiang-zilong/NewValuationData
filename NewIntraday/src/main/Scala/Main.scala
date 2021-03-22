@@ -15,10 +15,10 @@ object Main {
       .getOrCreate()
     import spark.sqlContext.implicits._
 
-    val jy_tt_Path = "D:\\DATA\\3.5-3.11\\all_fund_2021-03-11-15.txt"
-    val hm_Path =    "D:\\DATA\\3.5-3.11\\gz_05_12.txt"
-    val my_Path =    "D:\\DATA\\3.5-3.11\\mayi.txt"
-    val wd_Path =    "D:\\DATA\\3.5-3.11\\wind.txt"
+    val jy_tt_Path = "D:\\DATA\\3.12-3.18\\all_fund_2021-03-18-15.txt"
+    val hm_Path =    "D:\\DATA\\3.12-3.18\\gz_12_18.txt"
+    val my_Path =    "D:\\DATA\\3.12-3.18\\mayi.txt"
+    val wd_Path =    "D:\\DATA\\3.12-3.18\\wind.txt"
 
     val CodeTable_Path =  "D:\\DATA\\1.22-1.28\\fund_info.txt"
     val Found_Type_Path = "D:\\DATA\\1.22-1.28\\gz_marking.txt"
@@ -107,6 +107,7 @@ object Main {
 
 
 
+
     val sql =
       """
         |
@@ -131,22 +132,22 @@ object Main {
         |from
         |(select *
         |from t0
-        |where t0.time_int='2021-03-11')t5
+        |where t0.time_int='2021-03-18')t5
         | join
         |(select *
         |from t1
-        |where t1.Fgzrq = '2021-03-11')t6
+        |where t1.Fgzrq = '2021-03-18')t6
         |on t5.fund_code = t6.Fjjdm
         |
         |join
         |(select *
         | from t100
-        | where t100.date = '2021-03-11') wd
+        | where t100.date = '2021-03-18') wd
         | on t5.fund_code = wd.code
         | join
         |(select *
         |from t2
-        |where t2.download_date='2021-03-11')t7
+        |where t2.download_date='2021-03-18')t7
         |on t5.fund_code = t7.fproduct_code
         |join
         |(select
@@ -163,14 +164,13 @@ object Main {
 
     val summary = spark.sql(sql)
     summary
-     /* .coalesce(1)
+      /*.coalesce(1)
       .write.mode("Append")
       .option("header", "true")
       .format("CSV")
       .save("D:\\Result\\Main\\Day\\s1")*/.show(1000)
 
     summary.createTempView("summary")
-
 
 
 
@@ -265,8 +265,8 @@ object Main {
         |cast(sum(abs(summary.estimate_return   -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `蚂蚁估值绝对偏差均值`,
         |cast(sum(abs(summary.tiantian_nav      -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `天天估值绝对偏差均值`,
         |cast(sum(abs(summary.jy_nav            -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `聚源估值绝对偏差均值`,
-        |cast(sum(abs(summary.Fgz               -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `好买估值绝对偏差均值`,
-        |cast(sum(abs(summary.WDestimate_return -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `万得估值绝对偏差均值`
+        |cast(sum(abs(summary.WDestimate_return -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `万得估值绝对偏差均值`,
+        |cast(sum(abs(summary.Fgz               -summary.report_nav))/count(fund_code) * 1000 as decimal(16,3)) as `好买估值绝对偏差均值`
         |from summary
         |group by summary.type,summary.time_int
         |order by count(fund_code)
@@ -295,8 +295,8 @@ object Main {
         |my.Myvaluation as `蚂蚁估值绝对偏差中值`,
         |tt.Ttvaluation as `天天估值绝对偏差中值`,
         |jy.Jyvaluation as `聚源估值绝对偏差中值`,
-        |hm.Hmvaluation as `好买估值绝对偏差中值`,
-        |wd.Wdvaluation as `万得估值绝对偏差中值`
+        |wd.Wdvaluation as `万得估值绝对偏差中值`,
+        |hm.Hmvaluation as `好买估值绝对偏差中值`
         |
         |from(
         |select
@@ -410,8 +410,8 @@ object Main {
         |mayi.MyStd       as `蚂蚁估值绝对偏差标准差`,
         |tiantian.TtStd   as `天天估值绝对偏差标准差`,
         |juyuan.JyStd     as `聚源估值绝对偏差标准差`,
-        |haomai.HmStd     as `好买估值绝对偏差标准差`,
-        |wind.WdStd       as `万得估值绝对偏差标准差`
+        |wind.WdStd       as `万得估值绝对偏差标准差`,
+        |haomai.HmStd     as `好买估值绝对偏差标准差`
         |
         |from
         |(select
@@ -516,8 +516,8 @@ object Main {
         |concat(cast( sum(  abs((summary.estimate_return   -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `蚂蚁估值相对偏差均值`,
         |concat(cast( sum(  abs((summary.tiantian_nav      -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `天天估值相对偏差均值`,
         |concat(cast( sum(  abs((summary.jy_nav            -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `聚源估值相对偏差均值`,
-        |concat(cast( sum(  abs((summary.Fgz               -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `好买估值相对偏差均值`,
-        |concat(cast( sum(  abs((summary.WDestimate_return -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `万得估值相对偏差均值`
+        |concat(cast( sum(  abs((summary.WDestimate_return -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `万得估值相对偏差均值`,
+        |concat(cast( sum(  abs((summary.Fgz               -summary.report_nav) / (summary.report_nav)) ) / count(fund_code) *100 as decimal(16,3)),'%' )as `好买估值相对偏差均值`
         |from summary
         |group by time_int,type
         |order by count(fund_code)
@@ -545,8 +545,8 @@ object Main {
         |concat(my1.Myvaluation1,'%')   as  `蚂蚁估值相对偏差中值`,
         |concat(tt1.Ttvaluation1,'%')   as  `天天估值相对偏差中值`,
         |concat(jy1.Jyvaluation1,'%')   as  `聚源估值相对偏差中值`,
-        |concat(hm1.Hmvaluation1,'%')   as  `好买估值相对偏差中值`,
-        |concat(wd1.Wdvaluation1,'%')   as  `万得估值相对偏差中值`
+        |concat(wd1.Wdvaluation1,'%')   as  `万得估值相对偏差中值`,
+        |concat(hm1.Hmvaluation1,'%')   as  `好买估值相对偏差中值`
         |
         |from
         |(select
@@ -655,8 +655,8 @@ object Main {
         |concat(mayi1.MyStd1     , '%') as `蚂蚁估值相对偏差标准差` ,
         |concat(tiantian1.TtStd1 , '%') as `天天估值相对偏差标准差` ,
         |concat(juyuan1.JyStd1   , '%') as `聚源估值相对偏差标准差` ,
-        |concat(haomai1.HmStd1   , '%') as `好买估值相对偏差标准差` ,
-        |concat(wind1.WdStd1     , '%') as `万得估值相对偏差标准差`
+        |concat(wind1.WdStd1     , '%') as `万得估值相对偏差标准差` ,
+        |concat(haomai1.HmStd1   , '%') as `好买估值相对偏差标准差`
         |
         |from
         |(select
@@ -752,7 +752,7 @@ object Main {
         |
         |select
         |t10.time_int   as `日期`,
-        |'蚂蚁金服'      as `基金名称`,
+        |'蚂蚁'         as `基金名称`,
         |t10.type       as `基金类型`,
         |concat(cast(sum(a1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
         |concat(cast(sum(a2) / count(*) * 100 as decimal(16,3)),'%') as `(0.001,0.003]`,
@@ -826,6 +826,31 @@ object Main {
         |
         |union all
         |select
+        |t135.time_int  as `日期`,
+        |'万得'         as `基金名称`,
+        |t135.type      as `基金类型`,
+        |concat(cast(sum(x1) / count(*) *100 as decimal(16,3)),'%') as `<=0.001`,
+        |concat(cast(sum(x2) / count(*) *100 as decimal(16,3)),'%') as `（0.001,0.003]`,
+        |concat(cast(sum(x3) / count(*) *100 as decimal(16,3)),'%') as `(0.003,0.005]`,
+        |concat(cast(sum(x4) / count(*) *100 as decimal(16,3)),'%') as `(0.005,0.01]`,
+        |concat(cast(sum(x5) / count(*) *100 as decimal(16,3)),'%') as `(0.01,0.02]`,
+        |concat(cast(sum(x6) / count(*) *100 as decimal(16,3)),'%') as `>0.02`
+        |from(
+        |select
+        |summary.fund_code,
+        |summary.time_int ,
+        |summary.type     ,
+        |if( abs(summary.WDestimate_return - summary.report_nav)<=0.001,1,0) x1,
+        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.001 and  0.003), 1,0) x2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.003 and  0.005), 1,0) x3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.005 and  0.01 ), 1,0) x4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.01  and  0.02 ), 1,0) x5,
+        |if( abs(summary.WDestimate_return - summary.report_nav)>0.02,1,0) x6
+        |from summary) t135
+        |group by t135.time_int,t135.type
+        |
+        |union all
+        |select
         |t12.time_int  as `日期`,
         |'好买'        as `基金名称`,
         |t12.type      as `基金类型`,
@@ -849,31 +874,6 @@ object Main {
         |from summary) t12
         |group by t12.time_int,t12.type
         |
-        |
-        |union all
-        |select
-        |t135.time_int  as `日期`,
-        |'万得'         as `基金名称`,
-        |t135.type      as `基金类型`,
-        |concat(cast(sum(x1) / count(*) *100 as decimal(16,3)),'%') as `<=0.001`,
-        |concat(cast(sum(x2) / count(*) *100 as decimal(16,3)),'%') as `（0.001,0.003]`,
-        |concat(cast(sum(x3) / count(*) *100 as decimal(16,3)),'%') as `(0.003,0.005]`,
-        |concat(cast(sum(x4) / count(*) *100 as decimal(16,3)),'%') as `(0.005,0.01]`,
-        |concat(cast(sum(x5) / count(*) *100 as decimal(16,3)),'%') as `(0.01,0.02]`,
-        |concat(cast(sum(x6) / count(*) *100 as decimal(16,3)),'%') as `>0.02`
-        |from(
-        |select
-        |summary.fund_code,
-        |summary.time_int ,
-        |summary.type     ,
-        |if( abs(summary.WDestimate_return - summary.report_nav)<=0.001,1,0) x1,
-        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.001 and  0.003), 1,0) x2,
-        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.003 and  0.005), 1,0) x3,
-        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.005 and  0.01 ), 1,0) x4,
-        |if((abs(summary.WDestimate_return - summary.report_nav) between 0.01  and  0.02 ), 1,0) x5,
-        |if( abs(summary.WDestimate_return - summary.report_nav)>0.02,1,0) x6
-        |from summary) t135
-        |group by t135.time_int,t135.type
         |
         |
         |""".stripMargin)
@@ -975,6 +975,31 @@ object Main {
         |
         |union all
         |select
+        |t136.time_int  as `日期`,
+        |'万得'         as `基金名称`,
+        |t136.type      as `基金类型` ,
+        |concat(cast(sum(xx1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
+        |concat(cast(sum(xx2) / count(*) * 100 as decimal(16,3)),'%') as `<=0.003`,
+        |concat(cast(sum(xx3) / count(*) * 100 as decimal(16,3)),'%') as `<=0.005`,
+        |concat(cast(sum(xx4) / count(*) * 100 as decimal(16,3)),'%') as `<=0.01 `,
+        |concat(cast(sum(xx5) / count(*) * 100 as decimal(16,3)),'%') as `<=0.02 `,
+        |concat(cast(sum(xx6) / count(*) * 100 as decimal(16,3)),'%') as `>0.02 `
+        |from(
+        |select
+        |summary.fund_code ,
+        |summary.time_int  ,
+        |summary.type      ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.001 ), 1,0) xx1,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.003 ), 1,0) xx2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.005 ), 1,0) xx3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.01  ), 1,0) xx4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.02  ), 1,0) xx5,
+        |if((abs(summary.WDestimate_return - summary.report_nav) >  0.02  ), 1,0) xx6
+        |from summary) t136
+        |group by t136.type,t136.time_int
+        |
+        |union all
+        |select
         |t16.time_int  as `日期`,
         |'好买'         as `基金名称`,
         |t16.type      as `基金类型` ,
@@ -999,30 +1024,6 @@ object Main {
         |group by t16.type,t16.time_int
         |
         |
-        |union all
-        |select
-        |t136.time_int  as `日期`,
-        |'万得'         as `基金名称`,
-        |t136.type      as `基金类型` ,
-        |concat(cast(sum(xx1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
-        |concat(cast(sum(xx2) / count(*) * 100 as decimal(16,3)),'%') as `<=0.003`,
-        |concat(cast(sum(xx3) / count(*) * 100 as decimal(16,3)),'%') as `<=0.005`,
-        |concat(cast(sum(xx4) / count(*) * 100 as decimal(16,3)),'%') as `<=0.01 `,
-        |concat(cast(sum(xx5) / count(*) * 100 as decimal(16,3)),'%') as `<=0.02 `,
-        |concat(cast(sum(xx6) / count(*) * 100 as decimal(16,3)),'%') as `>0.02 `
-        |from(
-        |select
-        |summary.fund_code ,
-        |summary.time_int  ,
-        |summary.type      ,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.001 ), 1,0) xx1,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.003 ), 1,0) xx2,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.005 ), 1,0) xx3,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.01  ), 1,0) xx4,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.02  ), 1,0) xx5,
-        |if((abs(summary.WDestimate_return - summary.report_nav) >  0.02  ), 1,0) xx6
-        |from summary) t136
-        |group by t136.type,t136.time_int
         |
         |
         |""".stripMargin)
@@ -1123,6 +1124,31 @@ object Main {
         |
         |union all
         |select
+        |t137.time_int     as `日期`,
+        |'万得'           as `基金名称`,
+        |t137.type         as `基金类型`,
+        |concat(cast(sum(z1) / count(fund_code) *100 as decimal(16,3)),'%') as `<=0.005%`,
+        |concat(cast(sum(z2) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.05%,0.1%]`,
+        |concat(cast(sum(z3) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.1%,0.3%] `,
+        |concat(cast(sum(z4) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.3%,0.5%] `,
+        |concat(cast(sum(z5) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.5%,1%]   `,
+        |concat(cast(sum(z6) / count(fund_code) *100 as decimal(16,3)),'%') as `>1%`
+        |from(
+        |select
+        |summary.fund_code,
+        |summary.time_int ,
+        |summary.type     ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    <=0.0005),1,0) z1 ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.0005 and 0.001 ),1,0) z2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.001  and 0.003 ),1,0) z3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.003  and 0.005 ),1,0) z4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.005  and 0.01  ),1,0) z5,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    >0.01),1,0) z6
+        |from summary) t137
+        |group by t137.time_int,t137.type
+        |
+        |union all
+        |select
         |t20.time_int     as `日期`,
         |'好买'           as `基金名称`,
         |t20.type         as `基金类型`,
@@ -1147,30 +1173,7 @@ object Main {
         |group by t20.time_int,t20.type
         |
         |
-        |union all
-        |select
-        |t137.time_int     as `日期`,
-        |'万得'           as `基金名称`,
-        |t137.type         as `基金类型`,
-        |concat(cast(sum(z1) / count(fund_code) *100 as decimal(16,3)),'%') as `<=0.005%`,
-        |concat(cast(sum(z2) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.05%,0.1%]`,
-        |concat(cast(sum(z3) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.1%,0.3%] `,
-        |concat(cast(sum(z4) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.3%,0.5%] `,
-        |concat(cast(sum(z5) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.5%,1%]   `,
-        |concat(cast(sum(z6) / count(fund_code) *100 as decimal(16,3)),'%') as `>1%`
-        |from(
-        |select
-        |summary.fund_code,
-        |summary.time_int ,
-        |summary.type     ,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    <=0.0005),1,0) z1 ,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.0005 and 0.001 ),1,0) z2,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.001  and 0.003 ),1,0) z3,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.003  and 0.005 ),1,0) z4,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.005  and 0.01  ),1,0) z5,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    >0.01),1,0) z6
-        |from summary) t137
-        |group by t137.time_int,t137.type
+        |
         |
         |
         |""".stripMargin)
@@ -1179,6 +1182,7 @@ object Main {
       .option("header", "true")
       .format("CSV")
       .save("D:\\Result\\Main\\Day\\need5_Relative_Deviation1")*/ .show()
+
 
 
     /**
@@ -1199,7 +1203,7 @@ object Main {
         |concat(cast(sum(ee2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
         |concat(cast(sum(ee3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
         |concat(cast(sum(ee4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
-        |concat(cast(sum(ee5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  `,
+        |concat(cast(sum(ee5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
         |concat(cast(sum(ee6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
         |from(
         |select
@@ -1220,12 +1224,12 @@ object Main {
         |t25.time_int    as `日期`,
         |'天天'          as `基金名称`,
         |t25.type        as `基金类型`,
-        |concat(cast(sum(hh1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
-        |concat(cast(sum(hh2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
-        |concat(cast(sum(hh3) / count(*) *100 as decimal(16,3)),'%') as `<=0.03% `,
-        |concat(cast(sum(hh4) / count(*) *100 as decimal(16,3)),'%') as `<=0.05% `,
-        |concat(cast(sum(hh5) / count(*) *100 as decimal(16,3)),'%') as `<=0.1%  `,
-        |concat(cast(sum(hh6) / count(*) *100 as decimal(16,3)),'%') as ` >0.1%   `
+        |concat(cast(sum(hh1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(hh2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
+        |concat(cast(sum(hh3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
+        |concat(cast(sum(hh4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
+        |concat(cast(sum(hh5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
+        |concat(cast(sum(hh6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
         |from(
         |select
         |summary.fund_code code ,
@@ -1245,12 +1249,12 @@ object Main {
         |t23.time_int    as `日期`,
         |'聚源'          as `基金名称`,
         |t23.type        as `基金类型`,
-        |concat(cast(sum(ff1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
-        |concat(cast(sum(ff2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
-        |concat(cast(sum(ff3) / count(*) *100 as decimal(16,3)),'%') as `<=0.03% `,
-        |concat(cast(sum(ff4) / count(*) *100 as decimal(16,3)),'%') as `<=0.05% `,
-        |concat(cast(sum(ff5) / count(*) *100 as decimal(16,3)),'%') as `<=0.1%  `,
-        |concat(cast(sum(ff6) / count(*) *100 as decimal(16,3)),'%') as ` >0.1%   `
+        |concat(cast(sum(ff1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(ff2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
+        |concat(cast(sum(ff3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
+        |concat(cast(sum(ff4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
+        |concat(cast(sum(ff5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
+        |concat(cast(sum(ff6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
         |from(
         |select
         |summary.fund_code code ,
@@ -1267,40 +1271,15 @@ object Main {
         |
         |union all
         |select
-        |t24.time_int    as `日期`,
-        |'好买'          as `基金名称`,
-        |t24.type        as `基金类型`,
-        |concat(cast(sum(gg1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
-        |concat(cast(sum(gg2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
-        |concat(cast(sum(gg3) / count(*) *100 as decimal(16,3)),'%') as `<=0.03% `,
-        |concat(cast(sum(gg4) / count(*) *100 as decimal(16,3)),'%') as `<=0.05% `,
-        |concat(cast(sum(gg5) / count(*) *100 as decimal(16,3)),'%') as `<=0.1%  `,
-        |concat(cast(sum(gg6) / count(*) *100 as decimal(16,3)),'%') as ` >0.1%   `
-        |from(
-        |select
-        |summary.fund_code code ,
-        |summary.time_int ,
-        |summary.type    ,
-        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.0005),1,0) gg1 ,
-        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.001 ),1,0) gg2,
-        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.003 ),1,0) gg3,
-        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.005 ),1,0) gg4,
-        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.01  ),1,0) gg5,
-        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   >  0.01  ),1,0) gg6
-        |from summary) t24
-        |group by t24.time_int,t24.type
-        |
-        |union all
-        |select
         |t138.time_int    as `日期`,
         |'万得'          as `基金名称`,
         |t138.type        as `基金类型`,
-        |concat(cast(sum(zz1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
-        |concat(cast(sum(zz2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
-        |concat(cast(sum(zz3) / count(*) *100 as decimal(16,3)),'%') as `<=0.03% `,
-        |concat(cast(sum(zz4) / count(*) *100 as decimal(16,3)),'%') as `<=0.05% `,
-        |concat(cast(sum(zz5) / count(*) *100 as decimal(16,3)),'%') as `<=0.1%  `,
-        |concat(cast(sum(zz6) / count(*) *100 as decimal(16,3)),'%') as ` >0.1%   `
+        |concat(cast(sum(zz1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(zz2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
+        |concat(cast(sum(zz3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
+        |concat(cast(sum(zz4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
+        |concat(cast(sum(zz5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
+        |concat(cast(sum(zz6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
         |from(
         |select
         |summary.fund_code code ,
@@ -1315,12 +1294,42 @@ object Main {
         |from summary) t138
         |group by t138.time_int,t138.type
         |
+        |union all
+        |select
+        |t24.time_int    as `日期`,
+        |'好买'           as `基金名称`,
+        |t24.type        as `基金类型`,
+        |concat(cast(sum(gg1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(gg2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
+        |concat(cast(sum(gg3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
+        |concat(cast(sum(gg4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
+        |concat(cast(sum(gg5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
+        |concat(cast(sum(gg6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
+        |from(
+        |select
+        |summary.fund_code code ,
+        |summary.time_int ,
+        |summary.type    ,
+        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.0005),1,0) gg1 ,
+        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.001 ),1,0) gg2,
+        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.003 ),1,0) gg3,
+        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.005 ),1,0) gg4,
+        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   <= 0.01  ),1,0) gg5,
+        |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   >  0.01  ),1,0) gg6
+        |from summary) t24
+        |group by t24.time_int,t24.type
+        |
+        |
+        |
+        |
+        |
         |""".stripMargin)
        /*.coalesce(1)
        .write.mode("Append")
        .option("header", "true")
        .format("CSV")
        .save("D:\\Result\\Main\\Day\\need5_Relative_Deviation2")*/.show()
+
 
 
 

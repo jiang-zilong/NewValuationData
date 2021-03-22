@@ -1025,7 +1025,7 @@ object old1 {
         |concat(cast(sum(ee2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
         |concat(cast(sum(ee3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
         |concat(cast(sum(ee4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
-        |concat(cast(sum(ee5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  `,
+        |concat(cast(sum(ee5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
         |concat(cast(sum(ee6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
         |from(
         |select
@@ -1046,12 +1046,12 @@ object old1 {
         |t25.time_int    as `日期`,
         |'天天'          as `基金名称`,
         |t25.type        as `基金类型`,
-        |concat(cast(sum(hh1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
-        |concat(cast(sum(hh2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
-        |concat(cast(sum(hh3) / count(*) *100 as decimal(16,3)),'%') as `<=0.03% `,
-        |concat(cast(sum(hh4) / count(*) *100 as decimal(16,3)),'%') as `<=0.05% `,
-        |concat(cast(sum(hh5) / count(*) *100 as decimal(16,3)),'%') as `<=0.1%  `,
-        |concat(cast(sum(hh6) / count(*) *100 as decimal(16,3)),'%') as ` >0.1%   `
+        |concat(cast(sum(hh1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(hh2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
+        |concat(cast(sum(hh3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
+        |concat(cast(sum(hh4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
+        |concat(cast(sum(hh5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
+        |concat(cast(sum(hh6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
         |from(
         |select
         |summary.fund_code code ,
@@ -1071,12 +1071,12 @@ object old1 {
         |t23.time_int    as `日期`,
         |'聚源'          as `基金名称`,
         |t23.type        as `基金类型`,
-        |concat(cast(sum(ff1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
-        |concat(cast(sum(ff2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
-        |concat(cast(sum(ff3) / count(*) *100 as decimal(16,3)),'%') as `<=0.03% `,
-        |concat(cast(sum(ff4) / count(*) *100 as decimal(16,3)),'%') as `<=0.05% `,
-        |concat(cast(sum(ff5) / count(*) *100 as decimal(16,3)),'%') as `<=0.1%  `,
-        |concat(cast(sum(ff6) / count(*) *100 as decimal(16,3)),'%') as ` >0.1%   `
+        |concat(cast(sum(ff1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(ff2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
+        |concat(cast(sum(ff3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
+        |concat(cast(sum(ff4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
+        |concat(cast(sum(ff5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
+        |concat(cast(sum(ff6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
         |from(
         |select
         |summary.fund_code code ,
@@ -1096,12 +1096,12 @@ object old1 {
         |t24.time_int    as `日期`,
         |'好买'          as `基金名称`,
         |t24.type        as `基金类型`,
-        |concat(cast(sum(gg1) / count(*) *100 as decimal(16,3)),'%') as `<=0.005%`,
-        |concat(cast(sum(gg2) / count(*) *100 as decimal(16,3)),'%') as `<=0.01% `,
-        |concat(cast(sum(gg3) / count(*) *100 as decimal(16,3)),'%') as `<=0.03% `,
-        |concat(cast(sum(gg4) / count(*) *100 as decimal(16,3)),'%') as `<=0.05% `,
-        |concat(cast(sum(gg5) / count(*) *100 as decimal(16,3)),'%') as `<=0.1%  `,
-        |concat(cast(sum(gg6) / count(*) *100 as decimal(16,3)),'%') as ` >0.1%   `
+        |concat(cast(sum(gg1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(gg2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
+        |concat(cast(sum(gg3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
+        |concat(cast(sum(gg4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
+        |concat(cast(sum(gg5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
+        |concat(cast(sum(gg6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
         |from(
         |select
         |summary.fund_code code ,

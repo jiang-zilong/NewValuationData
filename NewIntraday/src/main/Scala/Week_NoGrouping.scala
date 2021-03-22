@@ -21,7 +21,7 @@ object Week_NoGrouping {
 
 
     //一周的汇总之后的数据路径
-    val week_date = "D:\\DATA\\3.5-3.11\\NO5号TopDay.txt"
+    val week_date = "D:\\DATA\\3.12-3.18\\tops.txt"
 
 
     val lines = spark.sparkContext.
@@ -125,8 +125,8 @@ object Week_NoGrouping {
         |cast(sum(abs(summary.estimate_return -summary.report_nav)) / count(fund_code) * 1000 as decimal(16,3)) as `蚂蚁估值绝对偏差均值`,
         |cast(sum(abs(summary.tiantian_nav    -summary.report_nav)) / count(fund_code) * 1000 as decimal(16,3)) as `天天估值绝对偏差均值`,
         |cast(sum(abs(summary.jy_nav          -summary.report_nav)) / count(fund_code) * 1000 as decimal(16,3)) as `聚源估值绝对偏差均值`,
-        |cast(sum(abs(summary.Fgz             -summary.report_nav)) / count(fund_code) * 1000 as decimal(16,3)) as `好买估值绝对偏差均值`,
-        |cast(sum(abs(WDestimate_return       -summary.report_nav)) / count(fund_code) * 1000 as decimal(16,3)) as `万得估值绝对偏差均值`
+        |cast(sum(abs(WDestimate_return       -summary.report_nav)) / count(fund_code) * 1000 as decimal(16,3)) as `万得估值绝对偏差均值`,
+        |cast(sum(abs(summary.Fgz             -summary.report_nav)) / count(fund_code) * 1000 as decimal(16,3)) as `好买估值绝对偏差均值`
         |from summary
         |
         |""".stripMargin)
@@ -152,8 +152,8 @@ object Week_NoGrouping {
         |my.Myvaluation as `蚂蚁估值绝对偏差中值`,
         |tt.Ttvaluation as `天天估值绝对偏差中值`,
         |jy.Jyvaluation as `聚源估值绝对偏差中值`,
-        |hm.Hmvaluation as `好买估值绝对偏差中值`,
-        |wd.Wdvaluation as `万得估值绝对偏差中值`
+        |wd.Wdvaluation as `万得估值绝对偏差中值`,
+        |hm.Hmvaluation as `好买估值绝对偏差中值`
         |
         |from(
         |select
@@ -245,8 +245,8 @@ object Week_NoGrouping {
         |mayi.MyStd       as `蚂蚁估值绝对偏差标准差`,
         |tiantian.TtStd   as `天天估值绝对偏差标准差`,
         |juyuan.JyStd     as `聚源估值绝对偏差标准差`,
-        |haomai.HmStd     as `好买估值绝对偏差标准差`,
-        |wind.WdStd       as `万得估值绝对偏差标准差`
+        |wind.WdStd       as `万得估值绝对偏差标准差`,
+        |haomai.HmStd     as `好买估值绝对偏差标准差`
         |
         |from
         |(select
@@ -332,8 +332,8 @@ object Week_NoGrouping {
         |concat(cast( sum(  abs((summary.estimate_return     -summary.report_nav) / (summary.report_nav)) ) / count(*) *100 as decimal(16,3)),'%' )as `蚂蚁估值相对偏差均值`,
         |concat(cast( sum(  abs((summary.tiantian_nav        -summary.report_nav) / (summary.report_nav)) ) / count(*) *100 as decimal(16,3)),'%' )as `天天估值相对偏差均值`,
         |concat(cast( sum(  abs((summary.jy_nav              -summary.report_nav) / (summary.report_nav)) ) / count(*) *100 as decimal(16,3)),'%' )as `聚源估值相对偏差均值`,
-        |concat(cast( sum(  abs((summary.Fgz                 -summary.report_nav) / (summary.report_nav)) ) / count(*) *100 as decimal(16,3)),'%' )as `好买估值相对偏差均值`,
-        |concat(cast( sum(  abs((summary.WDestimate_return   -summary.report_nav) / (summary.report_nav)) ) / count(*) *100 as decimal(16,3)),'%' )as `万得估值相对偏差均值`
+        |concat(cast( sum(  abs((summary.WDestimate_return   -summary.report_nav) / (summary.report_nav)) ) / count(*) *100 as decimal(16,3)),'%' )as `万得估值相对偏差均值`,
+        |concat(cast( sum(  abs((summary.Fgz                 -summary.report_nav) / (summary.report_nav)) ) / count(*) *100 as decimal(16,3)),'%' )as `好买估值相对偏差均值`
         |from summary
         |
         |""".stripMargin)
@@ -363,8 +363,8 @@ object Week_NoGrouping {
         |concat(my.Myvaluation1,'%')     as  `蚂蚁估值相对偏差中值`,
         |concat(tt.Ttvaluation1,'%')     as  `天天估值相对偏差中值`,
         |concat(jy.Jyvaluation1,'%')     as  `聚源估值相对偏差中值`,
-        |concat(hm.Hmvaluation1,'%')     as  `好买估值相对偏差中值`,
-        |concat(wind.Wdvaluation1,'%')   as  `万得估值相对偏差中值`
+        |concat(wind.Wdvaluation1,'%')   as  `万得估值相对偏差中值`,
+        |concat(hm.Hmvaluation1,'%')     as  `好买估值相对偏差中值`
         |
         |from
         |(select
@@ -450,8 +450,8 @@ object Week_NoGrouping {
         |concat(mayi1.MyStd1     , '%') as `蚂蚁估值相对偏差标准差` ,
         |concat(tiantian1.TtStd1 , '%') as `天天估值相对偏差标准差` ,
         |concat(juyuan1.JyStd1   , '%') as `聚源估值相对偏差标准差` ,
-        |concat(haomai1.HmStd1   , '%') as `好买估值相对偏差标准差` ,
-        |concat(wind1.WdStd1     , '%') as `万得估值相对偏差标准差`
+        |concat(wind1.WdStd1     , '%') as `万得估值相对偏差标准差` ,
+        |concat(haomai1.HmStd1   , '%') as `好买估值相对偏差标准差`
         |from(
         |select
         |count(*) co ,
@@ -589,28 +589,6 @@ object Week_NoGrouping {
         |
         |union all
         |select
-        |
-        |'好买'        as `基金名称`,
-        |concat(cast(sum(c1) / count(*) *100 as decimal(16,3)),'%') as `<=0.001`,
-        |concat(cast(sum(c2) / count(*) *100 as decimal(16,3)),'%') as `（0.001,0.003]`,
-        |concat(cast(sum(c3) / count(*) *100 as decimal(16,3)),'%') as `(0.003,0.005]`,
-        |concat(cast(sum(c4) / count(*) *100 as decimal(16,3)),'%') as `(0.005,0.01]`,
-        |concat(cast(sum(c5) / count(*) *100 as decimal(16,3)),'%') as `(0.01,0.02]`,
-        |concat(cast(sum(c6) / count(*) *100 as decimal(16,3)),'%') as `>0.02`
-        |from(
-        |select
-        |summary.fund_code,
-        |if( abs(summary.Fgz - summary.report_nav)<=0.001,1,0) c1,
-        |if((abs(summary.Fgz - summary.report_nav) between 0.001 and  0.003), 1,0) c2,
-        |if((abs(summary.Fgz - summary.report_nav) between 0.003 and  0.005), 1,0) c3,
-        |if((abs(summary.Fgz - summary.report_nav) between 0.005 and  0.01 ), 1,0) c4,
-        |if((abs(summary.Fgz - summary.report_nav) between 0.01  and  0.02 ), 1,0) c5,
-        |if( abs(summary.Fgz - summary.report_nav)>0.02,1,0) c6
-        |from summary) t12
-        |
-        |
-        |union all
-        |select
         |'万得'        as `基金名称`,
         |concat(cast(sum(z1) / count(*) *100 as decimal(16,3)),'%') as `<=0.001`,
         |concat(cast(sum(z2) / count(*) *100 as decimal(16,3)),'%') as `（0.001,0.003]`,
@@ -629,6 +607,27 @@ object Week_NoGrouping {
         |if( abs(summary.WDestimate_return - summary.report_nav)>0.02,1,0) z6
         |from summary) t154
         |
+        |union all
+        |select
+        |'好买'        as `基金名称`,
+        |concat(cast(sum(c1) / count(*) *100 as decimal(16,3)),'%') as `<=0.001`,
+        |concat(cast(sum(c2) / count(*) *100 as decimal(16,3)),'%') as `（0.001,0.003]`,
+        |concat(cast(sum(c3) / count(*) *100 as decimal(16,3)),'%') as `(0.003,0.005]`,
+        |concat(cast(sum(c4) / count(*) *100 as decimal(16,3)),'%') as `(0.005,0.01]`,
+        |concat(cast(sum(c5) / count(*) *100 as decimal(16,3)),'%') as `(0.01,0.02]`,
+        |concat(cast(sum(c6) / count(*) *100 as decimal(16,3)),'%') as `>0.02`
+        |from(
+        |select
+        |summary.fund_code,
+        |if( abs(summary.Fgz - summary.report_nav)<=0.001,1,0) c1,
+        |if((abs(summary.Fgz - summary.report_nav) between 0.001 and  0.003), 1,0) c2,
+        |if((abs(summary.Fgz - summary.report_nav) between 0.003 and  0.005), 1,0) c3,
+        |if((abs(summary.Fgz - summary.report_nav) between 0.005 and  0.01 ), 1,0) c4,
+        |if((abs(summary.Fgz - summary.report_nav) between 0.01  and  0.02 ), 1,0) c5,
+        |if( abs(summary.Fgz - summary.report_nav)>0.02,1,0) c6
+        |from summary) t12
+        |
+
         |
         |""".stripMargin)
       /*.coalesce(1)
@@ -715,7 +714,26 @@ object Week_NoGrouping {
         |
         |union all
         |select
+        |'万得'         as `基金名称`,
+        |concat(cast(sum(zz1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
+        |concat(cast(sum(zz2) / count(*) * 100 as decimal(16,3)),'%') as `<=0.003`,
+        |concat(cast(sum(zz3) / count(*) * 100 as decimal(16,3)),'%') as `<=0.005`,
+        |concat(cast(sum(zz4) / count(*) * 100 as decimal(16,3)),'%') as `<=0.01 `,
+        |concat(cast(sum(zz5) / count(*) * 100 as decimal(16,3)),'%') as `<=0.02 `,
+        |concat(cast(sum(zz6) / count(*) * 100 as decimal(16,3)),'%') as `>0.02 `
+        |from(
+        |select
+        |summary.fund_code ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.001 ), 1,0) zz1,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.003 ), 1,0) zz2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.005 ), 1,0) zz3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.01  ), 1,0) zz4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.02  ), 1,0) zz5,
+        |if((abs(summary.WDestimate_return - summary.report_nav) >  0.02  ), 1,0) zz6
+        |from summary) t155
         |
+        |union all
+        |select
         |'好买'         as `基金名称`,
         |concat(cast(sum(cc1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
         |concat(cast(sum(cc2) / count(*) * 100 as decimal(16,3)),'%') as `<=0.003`,
@@ -735,25 +753,7 @@ object Week_NoGrouping {
         |from summary) t16
         |
         |
-        |union all
-        |select
-        |'万得'         as `基金名称`,
-        |concat(cast(sum(zz1) / count(*) * 100 as decimal(16,3)),'%') as `<=0.001`,
-        |concat(cast(sum(zz2) / count(*) * 100 as decimal(16,3)),'%') as `<=0.003`,
-        |concat(cast(sum(zz3) / count(*) * 100 as decimal(16,3)),'%') as `<=0.005`,
-        |concat(cast(sum(zz4) / count(*) * 100 as decimal(16,3)),'%') as `<=0.01 `,
-        |concat(cast(sum(zz5) / count(*) * 100 as decimal(16,3)),'%') as `<=0.02 `,
-        |concat(cast(sum(zz6) / count(*) * 100 as decimal(16,3)),'%') as `>0.02 `
-        |from(
-        |select
-        |summary.fund_code ,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.001 ), 1,0) zz1,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.003 ), 1,0) zz2,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.005 ), 1,0) zz3,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.01  ), 1,0) zz4,
-        |if((abs(summary.WDestimate_return - summary.report_nav) <= 0.02  ), 1,0) zz5,
-        |if((abs(summary.WDestimate_return - summary.report_nav) >  0.02  ), 1,0) zz6
-        |from summary) t155
+        |
         |
         |""".stripMargin)
       /*.coalesce(1)
@@ -838,7 +838,26 @@ object Week_NoGrouping {
         |
         |union all
         |select
+        |'万得'           as `基金名称`,
+        |concat(cast(sum(y1) / count(fund_code) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(y2) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.05%,0.1%]`,
+        |concat(cast(sum(y3) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.1%,0.3]`,
+        |concat(cast(sum(y4) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.3%,0.5%]`,
+        |concat(cast(sum(y5) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.5%,1%]`,
+        |concat(cast(sum(y6) / count(fund_code) *100 as decimal(16,3)),'%') as `>1%`
+        |from(
+        |select
+        |summary.fund_code,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    <=0.0005),1,0) y1 ,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.0005 and 0.001 ),1,0) y2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.001  and 0.003 ),1,0) y3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.003  and 0.005 ),1,0) y4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.005  and 0.01  ),1,0) y5,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    >0.01),1,0) y6
+        |from summary) t156
         |
+        |union all
+        |select
         |'好买'           as `基金名称`,
         |concat(cast(sum(g1) / count(fund_code) *100 as decimal(16,3)),'%') as `<=0.05%`,
         |concat(cast(sum(g2) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.05%,0.1%]`,
@@ -858,25 +877,7 @@ object Week_NoGrouping {
         |from summary) t20
         |
         |
-        |union all
-        |select
-        |'万得'           as `基金名称`,
-        |concat(cast(sum(y1) / count(fund_code) *100 as decimal(16,3)),'%') as `<=0.05%`,
-        |concat(cast(sum(y2) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.05%,0.1%]`,
-        |concat(cast(sum(y3) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.1%,0.3]`,
-        |concat(cast(sum(y4) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.3%,0.5%]`,
-        |concat(cast(sum(y5) / count(fund_code) *100 as decimal(16,3)),'%') as `(0.5%,1%]`,
-        |concat(cast(sum(y6) / count(fund_code) *100 as decimal(16,3)),'%') as `>1%`
-        |from(
-        |select
-        |summary.fund_code,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    <=0.0005),1,0) y1 ,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.0005 and 0.001 ),1,0) y2,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.001  and 0.003 ),1,0) y3,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.003  and 0.005 ),1,0) y4,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   between 0.005  and 0.01  ),1,0) y5,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav    >0.01),1,0) y6
-        |from summary) t156
+        |
         |
         |""".stripMargin)
       /*.coalesce(1)
@@ -957,6 +958,25 @@ object Week_NoGrouping {
         |
         |union all
         |select
+        |'万得'          as `基金名称`,
+        |concat(cast(sum(zz1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
+        |concat(cast(sum(zz2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
+        |concat(cast(sum(zz3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
+        |concat(cast(sum(zz4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
+        |concat(cast(sum(zz5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
+        |concat(cast(sum(zz6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
+        |from(
+        |select
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.0005),1,0) zz1,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.001 ),1,0) zz2,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.003 ),1,0) zz3,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.005 ),1,0) zz4,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.01  ),1,0) zz5,
+        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   >  0.01  ),1,0) zz6
+        |from summary) t157
+        |
+        |union all
+        |select
         |'好买'          as `基金名称`,
         |concat(cast(sum(gg1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
         |concat(cast(sum(gg2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
@@ -974,24 +994,9 @@ object Week_NoGrouping {
         |if((abs(summary.Fgz - summary.report_nav) / summary.report_nav   >  0.01  ),1,0) gg6
         |from summary) t24
         |
-        |union all
-        |select
-        |'万得'          as `基金名称`,
-        |concat(cast(sum(zz1) / count(*) *100 as decimal(16,3)),'%') as `<=0.05%`,
-        |concat(cast(sum(zz2) / count(*) *100 as decimal(16,3)),'%') as `<=0.1% `,
-        |concat(cast(sum(zz3) / count(*) *100 as decimal(16,3)),'%') as `<=0.3% `,
-        |concat(cast(sum(zz4) / count(*) *100 as decimal(16,3)),'%') as `<=0.5% `,
-        |concat(cast(sum(zz5) / count(*) *100 as decimal(16,3)),'%') as `<=1%  ` ,
-        |concat(cast(sum(zz6) / count(*) *100 as decimal(16,3)),'%') as ` >1%   `
-        |from(
-        |select
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.0005),1,0) zz1,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.001 ),1,0) zz2,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.003 ),1,0) zz3,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.005 ),1,0) zz4,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   <= 0.01  ),1,0) zz5,
-        |if((abs(summary.WDestimate_return - summary.report_nav) / summary.report_nav   >  0.01  ),1,0) zz6
-        |from summary) t157
+        |
+        |
+        |
         |
         |""".stripMargin)
       /*.coalesce(1)
